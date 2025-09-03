@@ -1,5 +1,29 @@
 import tkinter as tk
 from tkinter import ttk
+from datetime import datetime, date
+#Enmascaramiento
+def enmascararFecha(texto):
+    limpio = ''.join(filter(str.isdigit, texto))
+    formatoFinal=""
+    if len(limpio)>8:
+        limpio=limpio[:8]
+    if len(limpio)>4:
+        formatoFinal=f"{limpio[:2]}-{limpio[2:4]}-{limpio[4:]}"
+    elif len(limpio)>2:
+        formatoFinal=f"{limpio[:2]}-{limpio[2:]}"
+    else:
+        formatoFinal=limpio
+    if fechaEntry.get()!=formatoFinal:
+        fechaEntry.delete(0,tk.END)
+        fechaEntry.insert(0, formatoFinal)
+    if len(fechaEntry.get())==10:
+        fechaActual=datetime.now().date()
+        fechaNacimiento = datetime.strptime(fechaEntry.get(), "%d-%m-%Y").date()
+        edad=fechaActual.year-fechaNacimiento.year
+        edadVar.set(edad)
+    else:
+        edadVar.set("")
+    return True
 
 # Ventana principal
 ventanaPrincipal = tk.Tk()
@@ -33,13 +57,18 @@ nombreEntry.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 #Fecha Nacimiento
 fechaNaciLabel=tk.Label(frame_pacientes, text="Fecha de nacimiento (dd/mm/aaaa):")
 fechaNaciLabel.grid(row=1, column=0, sticky="w", padx=5, pady=5)
-fechaEntry = tk.Entry(frame_pacientes)
+
+validacionFecha=ventanaPrincipal.register(enmascararFecha)
+
+
+fechaEntry = ttk.Entry(frame_pacientes,validate="key",validatecommand=(validacionFecha,"%P"))
 fechaEntry.grid(row=1, column=1, sticky="w", padx=5, pady=5)
 
 #Edad
 edadPLabel=tk.Label(frame_pacientes, text="Edad:")
 edadPLabel.grid(row=2, column=0, sticky="w", padx=5, pady=5)
-edadEntry = tk.Entry(frame_pacientes, state="readonly")
+edadVar=tk.StringVar()
+edadEntry = tk.Entry(frame_pacientes, textvariable=edadVar, state="readonly")
 edadEntry.grid(row=2, column=1, sticky="w", padx=5, pady=5)
 
 #Sexo
@@ -74,7 +103,7 @@ comboCentroMedico.grid(row=7, column=1, sticky="w", padx=5, pady=5)
 
 #Botones
 btn_frame = tk.Frame(frame_pacientes)
-btn_frame.grid(row=8, column=0, columnspan=2, pady=5, sticky="w")
+btn_frame.grid(row=8, column=1, columnspan=2, pady=5, sticky="w")
 
 btn_registrar = tk.Button(btn_frame, text="Registrar", command="")
 btn_registrar.grid(row=0, column=0, padx=5)
@@ -101,11 +130,11 @@ treeview.column("GrupoS", width=100, anchor="center")
 treeview.column("TipoS", width=100, anchor="center")
 treeview.column("CentroM", width=120)
 
-treeview.grid(row=7, column=0, columnspan=2, sticky="nsew", padx=5, pady=10)
+treeview.grid(row=9, column=0, columnspan=2, sticky="nsew", padx=5, pady=10)
 
 scroll_y = ttk.Scrollbar(frame_pacientes, orient="vertical", command=treeview.yview)
 treeview.configure(yscrollcommand=scroll_y.set)
-scroll_y.grid(row=7, column=2, sticky="ns")
+scroll_y.grid(row=8, column=2, sticky="ns")
 
 #FORMULARIO DOCTORES
 
@@ -140,12 +169,15 @@ telLabel.grid(row=4, column=0, sticky="e", padx=10, pady=6)
 telefonoDocEntry = tk.Entry(frame_doctores, width=28)
 telefonoDocEntry.grid(row=4, column=1, sticky="w", padx=10, pady=6)
 
+#Frame pacientes
+btn_frameD = tk.Frame(frame_doctores, bg="#e8f2ff")
+btn_frameD.grid(row=5, column=0, columnspan=2, pady=5, sticky="nsew")
 # Botones 
-btnRegDoc = tk.Button(frame_doctores, text="Registrar", command="",bg="#27ae60", fg="white", 
+btnRegDoc = tk.Button(btn_frameD, text="Registrar", command="",bg="#27ae60", fg="white", 
                         activebackground="#1e874b")
 btnRegDoc.grid(row=5, column=1, padx=(10,5), pady=10, sticky="e")
 
-btnElimDoc = tk.Button(frame_doctores, text="Eliminar", command="",bg="#e74c3c", fg="white", 
+btnElimDoc = tk.Button(btn_frameD, text="Eliminar", command="",bg="#e74c3c", fg="white", 
                         activebackground="#c44134")
 btnElimDoc.grid(row=5, column=2, padx=(5,10), pady=10, sticky="w")
 
@@ -173,4 +205,5 @@ scroll_y_doc.grid(row=6, column=3, sticky="ns")
 
 # Iniciar ventana
 ventanaPrincipal.mainloop()
+
 
