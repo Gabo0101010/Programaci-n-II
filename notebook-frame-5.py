@@ -33,6 +33,28 @@ def guardarArchivo():
                 f'{paciente["Genero"]}|{paciente["Grupo Sanguineo"]}|'
                 f'{paciente["Tipo de Seguro"]}|{paciente["Centro Medico"]}\n'
             )
+def cargar_desde_archivo():
+    try:
+        with open("paciente.txt", "r", encoding="utf-8") as archivo:
+            paciente_data.clear()
+            for linea in archivo:
+                datos = linea.strip().split("|")
+                if len(datos) == 7:
+                    paciente = {
+                        "Nombre": datos[0],
+                        "Fecha de Nacimiento": datos[1],
+                        "Edad": datos[2],
+                        "Genero": datos[3],
+                        "Grupo Sanguineo": datos[4],
+                        "Tipo de Seguro": datos[5],
+                        "Centro Medico": datos[6]
+                    }
+                    paciente_data.append(paciente)
+        cargar_treeview()
+    except FileNotFoundError:
+        # Si no existe el archivo, lo crea vacío
+        open("paciente.txt", "w", encoding="utf-8").close()
+
 #Lista pacientes
 paciente_data=[]
 #Funcion registrar
@@ -279,6 +301,7 @@ treeviewDoctores.grid(row=6, column=0, columnspan=3, padx=15, sticky="nsew")
 scroll_y_doc = ttk.Scrollbar(frame_doctores, orient="vertical", command=treeviewDoctores.yview)
 treeviewDoctores.configure(yscrollcommand=scroll_y_doc.set)
 scroll_y_doc.grid(row=6, column=3, sticky="ns")
-
+#Cargar datos desde archivo
+cargar_desde_archivo()
 # Iniciar ventana
 ventanaPrincipal.mainloop()
