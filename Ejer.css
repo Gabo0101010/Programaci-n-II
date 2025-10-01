@@ -1,0 +1,17 @@
+#titulo_principal {
+    color: rgb(23, 75, 22);
+    text-align: center;
+    font-size: 70px;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+#Subtitulo {
+    color: green;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 50px;
+    margin-left: 50px;
+}
+P{
+    font-family: 'Courier New', Courier, monospace;
+    margin-left: 10px;
+}
